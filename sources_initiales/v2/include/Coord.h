@@ -3,16 +3,27 @@
 
 class Coord
 {
-public:
-    Coord(bool valide = true); // constructeur
-    bool operator<(const Arete &autre) const;
-    int getId() const;
-    bool getValide() const;
+    public:
+        Coord(); // constructeur
+        Coord(float x, float y); // constructeur 2
+        float norm() const;
 
-private:
-    int id;
-    bool valide;
-    static int currentId;
+        bool operator==(const Coord &c) const ;
+        Coord operator+(const Coord &c) const ;
+        Coord operator-(const Coord &c) const ;
+        Coord& operator+=(const Coord &c);
+        Coord& operator-=(const Coord &c);
+        Coord operator*(const float &f) const ;
+        Coord operator/(const float &f) const;
+        Coord& operator*=(const float &f);
+        Coord& operator/=(const float &f);
+
+        float & operator[](int dim);
+        float operator[](int dim) const;
+
+    private:
+        float x;
+        float y;
 };
 
 #endif

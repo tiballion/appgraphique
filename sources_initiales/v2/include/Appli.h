@@ -1,14 +1,14 @@
 #ifndef APPLI_H
 #define APPLI_H
 #include <SFML/Graphics.hpp>
-#include "GrapheValue.h"
+// #include "GrapheValue.h"
 
 class Appli
 {
 public:
     Appli(unsigned int largeur, unsigned int hauteur);
 
-    void setGraphe(GrapheValue &g);
+    // void setGraphe(GrapheValue &g);
 
     bool running() const;
     void exec();
@@ -21,7 +21,7 @@ private:
 
     sf::CircleShape m_sommet;
     sf::Text m_etiquette;
-    GrapheValue *m_g;
+    // GrapheValue *m_g;
 
     bool m_montre_etiquette;
     bool m_interpoler_couleurs;
