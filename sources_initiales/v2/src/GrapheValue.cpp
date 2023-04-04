@@ -2,11 +2,89 @@
 #include "Graphe.h"
 #include "Arete.h"
 #include "Sommet.h"
+#include "Coord.h"
+#include "utils.h"
+
+#include <fstream>
+#include <vector>
+#include <string>
+#include <map>
 
 using namespace std;
 
 bool GrapheValue::charger(std::string fichier) {
-    return Graphe::charger(fichier);
+    map<int, Sommet> idSommet;
+
+    // Ajout des sommets
+    bool sommetsFinis = false;
+    std::ifstream in(fichier.c_str());
+    while (!in.eof())
+    {
+        char ligne[10000];
+        in.getline(ligne, 10000);
+        string lignes(ligne);
+        lignes = lignes.substr(0, lignes.size() - 1);
+        if (lignes == "#sommets")
+        {
+            continue;
+        }
+        else if (lignes == "#aretes")
+        {
+            sommetsFinis = true;
+        }
+        else if (!sommetsFinis)
+        {
+            vector<string> items;
+            decouper(lignes, items, ";");
+
+            if (items.size() != 4) {
+                return false;
+            } else {
+                int id = stoi(items[0]);
+                if (idSommet.find(id) != idSommet.end())
+                    return false; // deux fois le meme identifiant dans le fichier
+                Sommet n = ajouterSommet();
+                idSommet[id] = n;
+                
+                vector<string> position;
+                decouper(items[1], position, " ");
+                int positionX = stoi(position[0]);
+                int positionY = stoi(position[1]);
+                Coord coord(positionX, positionY);
+                positionSommet(n, coord);
+
+                vector<string> couleur;
+                decouper(items[2], couleur, " ");
+                int couleurR = stoi(couleur[0]);
+                int couleurG = stoi(couleur[1]);
+                int couleurB = stoi(couleur[2]);
+                int couleurA = stoi(couleur[3]);
+                Couleur coul(couleurR, couleurG, couleurB, couleurA);
+                couleurSommet(n, coul);
+
+                std::string etiquette = items[3];
+                etiquetteSommet(n, etiquette);
+            }
+        }
+        else if (sommetsFinis && lignes != "")
+        {
+            vector<string> items;
+            decouper(lignes, items, " ");
+            if (items.size() != 2)
+                return false;
+
+            int id1 = stoi(items[0]);
+            int id2 = stoi(items[1]);
+
+            // test si les id sont corrects
+            if (idSommet.find(id1) == idSommet.end() || idSommet.find(id2) == idSommet.end())
+                return false;
+            Sommet n1 = idSommet[id1];
+            Sommet n2 = idSommet[id2];
+            ajouterArete(n1, n2);
+        }
+    }
+    return true;
 }
 
 Sommet GrapheValue::ajouterSommet() {
