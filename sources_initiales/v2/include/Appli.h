@@ -1,14 +1,14 @@
 #ifndef APPLI_H
 #define APPLI_H
 #include <SFML/Graphics.hpp>
-// #include "GrapheValue.h"
+#include "GrapheValue.h"
 
 class Appli
 {
 public:
     Appli(unsigned int largeur, unsigned int hauteur);
 
-    // void setGraphe(GrapheValue &g);
+    void setGraphe(GrapheValue &g);
 
     bool running() const;
     void exec();

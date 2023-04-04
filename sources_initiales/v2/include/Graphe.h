@@ -6,6 +6,8 @@
 
 #include <set>
 #include <map>
+#include <string>
+
 
 using namespace std;
 
@@ -33,7 +35,7 @@ public:
     int nbSommets() const;
     int nbAretes() const;
 
-    bool charger(std::string fichier);
+    virtual bool charger(std::string fichier);
 
 private:
     std::set<Sommet> sommets;

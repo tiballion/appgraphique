@@ -70,7 +70,6 @@ clean:
 	$(RM) $(OBJECTS)
 	$(RM) $(DEPENDS)
 	$(RM) $(BIN)/$(EXE)
-
 # remove everything except source
 .PHONY: reset
 reset:
