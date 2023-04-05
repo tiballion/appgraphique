@@ -7,14 +7,17 @@
 class ObservateurGraphe
 {
     public:
-        void traiterAjout(const Sommet &n) ;
-        void traiterAjout(const Arete &e) ;
+        ObservateurGraphe() = default;
+        virtual ~ObservateurGraphe() = default;
 
-        void traiterSuppression(const Arete &e) ;
-        void traiterSuppression(const Sommet &n) ;
+        virtual void traiterAjout(const Sommet &n) = 0;
+        virtual void traiterAjout(const Arete &e) = 0;
 
-        void traiterProprieteChangee(const Sommet &n) ;
-        void traiterProprieteChangee(const Arete &e) ;
+        virtual void traiterSuppression(const Arete &e) = 0;
+        virtual void traiterSuppression(const Sommet &n) = 0;
+
+        virtual void traiterProprieteChangee(const Sommet &n) = 0;
+        virtual void traiterProprieteChangee(const Arete &e) = 0;
 };
 
 #endif

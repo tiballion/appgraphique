@@ -87,3 +87,37 @@ void Appli::dessiner() {
 
     m_fenetre.display();
 }
+
+void Appli::traiterAjout(const Sommet &s) {
+    m_sommet.setPosition(m_g->positionSommet(s)[0], m_g->positionSommet(s)[1]);
+    m_sommet.setFillColor(sf::Color(m_g->couleurSommet(s)[0], m_g->couleurSommet(s)[1], m_g->couleurSommet(s)[2]));
+    m_sommet.setOutlineThickness(1);
+    m_sommet.setOutlineColor(sf::Color(0, 0, 0));
+    m_fenetre.draw(m_sommet);
+}
+
+void Appli::traiterAjout(const Arete &a) {
+    sf::Vertex ligne[] = {
+        sf::Vertex(sf::Vector2f(m_g->positionSommet(m_g->source(a))[0] + 5, m_g->positionSommet(m_g->source(a))[1] + 5)),
+        sf::Vertex(sf::Vector2f(m_g->positionSommet(m_g->destination(a))[0] + 5, m_g->positionSommet(m_g->destination(a))[1] + 5))
+    };
+    ligne[0].color = sf::Color(m_g->couleurArete(a)[0], m_g->couleurArete(a)[1], m_g->couleurArete(a)[2]);
+    ligne[1].color = sf::Color(m_g->couleurArete(a)[0], m_g->couleurArete(a)[1], m_g->couleurArete(a)[2]);
+    m_fenetre.draw(ligne, 2, sf::Lines);
+}
+
+void Appli::traiterSuppression(const Sommet &s) {
+    cout << "suppression sommet " << endl;
+}
+
+void Appli::traiterSuppression(const Arete &a) {
+    cout << "suppression arete " << endl;
+}
+
+void Appli::traiterProprieteChangee(const Sommet &s) {
+    cout << "propriete sommet changee" << endl;  
+}
+
+void Appli::traiterProprieteChangee(const Arete &a) {
+    cout << "propriete arete changee" << endl;
+}
