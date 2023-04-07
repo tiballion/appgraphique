@@ -15,8 +15,6 @@ Appli::Appli(unsigned int largeur, unsigned int hauteur) {
 
     sf::View m_vue;
     m_fenetre.setView(m_vue);
-
-    m_sommet = sf::CircleShape(5);
 }
 
 void Appli::setGraphe(GrapheValue &g) {
@@ -55,45 +53,13 @@ void Appli::traiter_evenements() {
 
 void Appli::dessiner() {
     m_fenetre.clear(sf::Color::White);
-    
-    // dessiner les aretes
-    for (Arete a : m_g->getAretes()) {
-        sf::Vertex ligne[] = {
-            sf::Vertex(sf::Vector2f(m_g->positionSommet(m_g->source(a))[0] + 5, m_g->positionSommet(m_g->source(a))[1] + 5)),
-            sf::Vertex(sf::Vector2f(m_g->positionSommet(m_g->destination(a))[0] + 5, m_g->positionSommet(m_g->destination(a))[1] + 5))
-        };
-        ligne[0].color = sf::Color(m_g->couleurArete(a)[0], m_g->couleurArete(a)[1], m_g->couleurArete(a)[2]);
-        ligne[1].color = sf::Color(m_g->couleurArete(a)[0], m_g->couleurArete(a)[1], m_g->couleurArete(a)[2]);
-        m_fenetre.draw(ligne, 2, sf::Lines);
-    }
-
-    // dessiner les sommets
-    for (Sommet s : m_g->getSommets()) {
-        m_sommet.setPosition(m_g->positionSommet(s)[0], m_g->positionSommet(s)[1]);
-        m_sommet.setFillColor(sf::Color(m_g->couleurSommet(s)[0], m_g->couleurSommet(s)[1], m_g->couleurSommet(s)[2]));
-        m_sommet.setOutlineThickness(1);
-        m_sommet.setOutlineColor(sf::Color(0, 0, 0));
-        m_fenetre.draw(m_sommet);
-    }
-
-    // dessiner les etiquettes
-    if (m_montre_etiquette) {
-        for (Sommet s : m_g->getSommets()) {
-            m_etiquette.setString(m_g->etiquetteSommet(s));
-            m_etiquette.setPosition(m_g->positionSommet(s)[0] + 10, m_g->positionSommet(s)[1] + 10);
-            m_fenetre.draw(m_etiquette);
-        }
-    }
-
+    calculerFormesGeometriques();
     m_fenetre.display();
 }
 
 void Appli::traiterAjout(const Sommet &s) {
-    m_sommet.setPosition(m_g->positionSommet(s)[0], m_g->positionSommet(s)[1]);
-    m_sommet.setFillColor(sf::Color(m_g->couleurSommet(s)[0], m_g->couleurSommet(s)[1], m_g->couleurSommet(s)[2]));
-    m_sommet.setOutlineThickness(1);
-    m_sommet.setOutlineColor(sf::Color(0, 0, 0));
-    m_fenetre.draw(m_sommet);
+    creerFormeSommet(s);
+    m_fenetre.draw(m_sommets.at(s));
 }
 
 void Appli::traiterAjout(const Arete &a) {
@@ -107,17 +73,63 @@ void Appli::traiterAjout(const Arete &a) {
 }
 
 void Appli::traiterSuppression(const Sommet &s) {
-    cout << "suppression sommet " << endl;
+    m_g->supprimerSommet(s);
+    dessiner();
 }
 
 void Appli::traiterSuppression(const Arete &a) {
-    cout << "suppression arete " << endl;
+    m_g->supprimerArete(a);
+    dessiner();
 }
 
 void Appli::traiterProprieteChangee(const Sommet &s) {
-    cout << "propriete sommet changee" << endl;  
+    dessiner();
 }
 
 void Appli::traiterProprieteChangee(const Arete &a) {
-    cout << "propriete arete changee" << endl;
+    dessiner();
+}
+
+void Appli::creerFormeSommet(const Sommet &s) {
+    sf::CircleShape circle(5);
+    circle.setPosition(m_g->positionSommet(s)[0], m_g->positionSommet(s)[1]);
+    circle.setFillColor(sf::Color(m_g->couleurSommet(s)[0], m_g->couleurSommet(s)[1], m_g->couleurSommet(s)[2]));
+    circle.setOutlineThickness(1);
+    circle.setOutlineColor(sf::Color(0, 0, 0));
+    m_sommets.insert(std::make_pair(s, circle));
+}
+
+void Appli::creerFormeArete(Arete e) {
+    sf::Vertex ligne[] = {
+        sf::Vertex(sf::Vector2f(m_g->positionSommet(m_g->source(e))[0] + 5, m_g->positionSommet(m_g->source(e))[1] + 5)),
+        sf::Vertex(sf::Vector2f(m_g->positionSommet(m_g->destination(e))[0] + 5, m_g->positionSommet(m_g->destination(e))[1] + 5))
+    };
+    ligne[0].color = sf::Color(m_g->couleurArete(e)[0], m_g->couleurArete(e)[1], m_g->couleurArete(e)[2]);
+    ligne[1].color = sf::Color(m_g->couleurArete(e)[0], m_g->couleurArete(e)[1], m_g->couleurArete(e)[2]);
+    std::pair<sf::Vertex, sf::Vertex> vertices{ligne[0], ligne[1]};
+    m_aretes.insert(std::make_pair(e, vertices));
+}
+
+void Appli::calculerFormesGeometriques() {
+    // dessiner les aretes
+    for (Arete a : m_g->getAretes()) {
+        creerFormeArete(a);
+        sf::Vertex ligne[] = {m_aretes.at(a).first, m_aretes.at(a).second};
+        m_fenetre.draw(ligne, 2, sf::Lines);
+    }
+
+    // dessiner les sommets
+    for (Sommet s : m_g->getSommets()) {
+        creerFormeSommet(s);
+        m_fenetre.draw(m_sommets.at(s));
+    }
+
+    // dessiner les etiquettes
+    // if (m_montre_etiquette) {
+    //     for (Sommet s : m_g->getSommets()) {
+    //         m_etiquette.setString(m_g->etiquetteSommet(s));
+    //         m_etiquette.setPosition(m_g->positionSommet(s)[0] + 10, m_g->positionSommet(s)[1] + 10);
+    //         m_fenetre.draw(m_etiquette);
+    //     }
+    // }
 }

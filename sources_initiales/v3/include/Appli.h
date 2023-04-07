@@ -6,6 +6,8 @@
 #include "Arete.h"
 #include "ObservateurGraphe.h"
 
+#include <map>
+
 class Appli : public ObservateurGraphe
 {
 public:
@@ -30,8 +32,9 @@ private:
     sf::RenderWindow m_fenetre;
     sf::Font m_font;
 
-    sf::CircleShape m_sommet;
-    sf::Text m_etiquette;
+    std::map<Sommet, sf::CircleShape> m_sommets;
+    std::map<Arete, std::pair<sf::Vertex, sf::Vertex> > m_aretes;
+    std::map<Sommet, sf::Text> m_etiquettes;
     GrapheValue *m_g;
 
     bool m_montre_etiquette;
@@ -44,6 +47,9 @@ private:
 
     void traiter_evenements();
     void dessiner();
+    void creerFormeSommet(const Sommet &n);
+    void creerFormeArete(Arete e);    
+    void calculerFormesGeometriques();
 };
 
 #endif // APPLI_H
